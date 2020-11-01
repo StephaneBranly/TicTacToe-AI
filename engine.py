@@ -57,19 +57,13 @@ def is_finished(terrain):
     return(0)
 
 
-def flat_terrain(terrain, coef):
-    flat_terrain = []
-    for i in range(3):
-        for j in range(3):
-            flat_terrain.append(coef*terrain[i][j])
-    return np.array(flat_terrain)
-
-
 def draw_terrain(screen, terrain):
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
     BLUE = (0, 0, 255)
+    screen.fill(WHITE)
+    pygame.draw.rect(screen, BLACK, (0, 0, 600, 600))
     for i in range(3):
         for j in range(3):
             pygame.draw.rect(screen, WHITE, (i*cell_size +
@@ -89,7 +83,6 @@ def draw_terrain(screen, terrain):
 def write_text(screen, text, y_pos):
     BLACK = (0, 0, 0)
     font = pygame.font.SysFont("Times", 72)
-
     text = font.render(text, True, BLACK)
     text_rect = text.get_rect()
     text_rect.centerx = screen.get_rect().centerx
