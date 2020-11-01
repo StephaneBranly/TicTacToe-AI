@@ -28,7 +28,7 @@ def is_move_ok(terrain, x_cell, y_cell):
         return 0
 
 
-def is_finished(terrain):
+def winner_or_not(terrain):
     if(abs(terrain[0][0]+terrain[0][1]+terrain[0][2]) == 3):
         return(terrain[0][0])
     if(abs(terrain[1][0]+terrain[1][1]+terrain[1][2]) == 3):
@@ -47,14 +47,17 @@ def is_finished(terrain):
         return(terrain[0][0])
     if(abs(terrain[2][0]+terrain[1][1]+terrain[0][2]) == 3):
         return(terrain[1][1])
+    return(0)
 
+
+def is_draw(terrain):
     sum_cells = 0
     for i in range(3):
         for j in range(3):
             sum_cells += abs(terrain[i][j])
     if(sum_cells == 9):
-        return -2
-    return(0)
+        return 1
+    return 0
 
 
 def draw_terrain(screen, terrain):
@@ -88,3 +91,38 @@ def write_text(screen, text, y_pos):
     text_rect.centerx = screen.get_rect().centerx
     text_rect.y = window_width+y_pos
     screen.blit(text, text_rect)
+
+
+def minimax(terrain, seed):
+
+    if(not seed):
+        bestScore = 0
+        action = [-1, -1]
+        for i in range(3):
+            for j in range(3):
+                if(is_move_ok(terrain, i, j)):
+                    terrain[i][j] = -1
+                    score = minimax(terrain, seed+1)
+                    print(f"score = {score}  ; position : {i};{j}")
+                    if(score > bestScore or action == [-1, -1]):
+                        bestScore = score
+                        action = [i, j]
+                    terrain[i][j] = 0
+        return action
+
+    score = 0
+
+    result = winner_or_not(terrain)
+    if(result or is_draw(terrain)):
+        score += result*(-1)
+    else:
+        for i in range(3):
+            for j in range(3):
+                if(is_move_ok(terrain, i, j)):
+                    player = seed % 2
+                    if(not player):
+                        player = -1
+                    terrain[i][j] = player
+                    score += minimax(terrain, seed+1)
+                    terrain[i][j] = 0
+    return score

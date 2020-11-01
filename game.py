@@ -27,35 +27,41 @@ def game():
     wins = [0, 0, 0]
 
     while continu:
-        # if(player % 2 == 1 and result == 0):
+        if(player == -1 and (not result) and (not engine.is_draw(terrain))):
+            print("Call IA")
+            coordIA = engine.minimax(terrain, 0)
+            print(coordIA)
+            terrain[coordIA[0]][coordIA[1]] = player
+            player *= (-1)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 continu = False
             if event.type == pygame.KEYDOWN:
-                if(result != 0):
+                if(result or engine.is_draw(terrain)):
                     result = 0
                     terrain = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
             if event.type == pygame.MOUSEBUTTONUP:
-                if(result == 0):  # and player % 2 == 0
+                if(result == 0 and player == 1):
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     coord = engine.new_move(
                         terrain, player, mouse_x, mouse_y)
                     if(coord[0] != -1 and coord[1] != -1):
-                        terrain[coord[0]][coord[1]] = 1
+                        terrain[coord[0]][coord[1]] = player
                         player *= (-1)
 
         engine.draw_terrain(screen, terrain)
 
         if(result == 0):
-            result = engine.is_finished(terrain)
+            result = engine.winner_or_not(terrain)
             wins[result+1] += 1
 
-        if(result):
-            if(result == -2):
-                draw_string = "egalite"
-            else:
+        if(result or engine.is_draw(terrain)):
+            if(result):
                 draw_string = "player "+str(result)+" wins"
+            else:
+                draw_string = "egalite"
+
         else:
             draw_string = "player "+str(player)
 
