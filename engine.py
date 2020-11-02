@@ -102,6 +102,8 @@ def minimax(terrain, seed):
             for j in range(3):
                 if(is_move_ok(terrain, i, j)):
                     terrain[i][j] = -1
+                    if(winner_or_not(terrain)):
+                        return [i, j]
                     score = minimax(terrain, seed+1)
                     print(f"score = {score}  ; position : {i};{j}")
                     if(score > bestScore or action == [-1, -1]):
